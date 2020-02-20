@@ -1,5 +1,7 @@
 __pycache__/*
 .ipynb_checkpoints/*
+data/images
+data/annotations
 *.swp
 logfile*
 *.pkl
