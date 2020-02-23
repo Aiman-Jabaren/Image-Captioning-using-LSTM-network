@@ -3,6 +3,8 @@ import pickle
 import argparse
 from collections import Counter
 from pycocotools.coco import COCO
+import nltk
+nltk.download('punkt')
 
 
 class Vocabulary(object):

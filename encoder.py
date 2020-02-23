@@ -4,11 +4,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision as tv
 
-class encoder(nn.Module):
+class Encoder(nn.Module):
     
-    def __init__(self):
+    def __init__(self, feature_dim):
         
-        super(encoder , self).__init__()
+        super(Encoder , self).__init__()
         
         resnet50 = tv.models.resnet50(pretrained = True)
         for child in resnet50.children():
@@ -30,7 +30,7 @@ class encoder(nn.Module):
         self.fc = resnet50.fc
         num_ftrs = resnet50.fc.in_features
 
-        self.fc = nn.Linear(num_ftrs, 10)
+        self.fc = nn.Linear(num_ftrs, feature_dim)
 
     def forward(self, x):
 
