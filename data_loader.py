@@ -8,6 +8,7 @@ import nltk
 from PIL import Image
 from build_vocab import Vocabulary
 from pycocotools.coco import COCO
+from torchvision import transforms
 
 
 class CocoDataset(data.Dataset):
@@ -23,7 +24,7 @@ class CocoDataset(data.Dataset):
         """
         self.root = root
         self.coco = COCO(json)
-        self.ids = ids
+        self.ids = self.coco.getAnnIds(ids)
         self.vocab = vocab
         self.transform = transform
 
@@ -32,8 +33,12 @@ class CocoDataset(data.Dataset):
         coco = self.coco
         vocab = self.vocab
         ann_id = self.ids[index]
+        
+       
+        
         caption = coco.anns[ann_id]['caption']
         img_id = coco.anns[ann_id]['image_id']
+        
         path = coco.loadImgs(img_id)[0]['file_name']
 
         image = Image.open(os.path.join(self.root, path)).convert('RGB')
@@ -70,6 +75,7 @@ def collate_fn(data):
         lengths: list; valid length for each padded caption.
     """
     # Sort a data list by caption length (descending order).
+    #print(data)
     data.sort(key=lambda x: len(x[1]), reverse=True)
     images, captions = zip(*data)
 
