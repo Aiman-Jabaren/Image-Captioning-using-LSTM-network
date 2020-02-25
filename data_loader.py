@@ -53,6 +53,7 @@ class CocoDataset(data.Dataset):
         tokens = tokens[:(maxCaptionSize-2)]
         tokens.insert(0, '<start>')
         tokens.append('<end>')
+        length = len(tokens)
         if len(tokens) < maxCaptionSize:
             tokens.extend([pad]*(maxCaptionSize - len(tokens)))
         caption = []
@@ -65,7 +66,8 @@ class CocoDataset(data.Dataset):
 #         caption.extend([vocab(token) for token in tokens[:maxCaptionSize]])
 #         caption.append(vocab('<end>'))
         target = torch.Tensor(caption)
-        return image, target
+#         print('len in dl1: ', length)
+        return image, target, length
 
     def __len__(self):
         return len(self.ids)
@@ -90,7 +92,8 @@ def collate_fn(data):
     # Sort a data list by caption length (descending order).
     #print(data)
     data.sort(key=lambda x: len(x[1]), reverse=True)
-    images, captions = zip(*data)
+    images, captions, actual_lengths = zip(*data)
+#     print('actual lengths in DL: ', actual_lengths)
 
     # Merge images (from tuple of 3D tensor to 4D tensor).
     images = torch.stack(images, 0)
@@ -101,7 +104,7 @@ def collate_fn(data):
     for i, cap in enumerate(captions):
         end = lengths[i]
         targets[i, :end] = cap[:end]        
-    return images, targets, lengths
+    return images, targets, lengths, actual_lengths
 
 def get_loader(root, json, ids, vocab, transform, batch_size, shuffle, num_workers):
     """Returns torch.utils.data.DataLoader for custom coco dataset."""
