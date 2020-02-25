@@ -46,10 +46,15 @@ class CocoDataset(data.Dataset):
             image = self.transform(image)
 
         # Convert caption (string) to word ids.
+        maxCaptionSize = 54
         tokens = nltk.tokenize.word_tokenize(str(caption).lower())
+        pad = '<pad>'
+        if len(tokens) < maxCaptionSize:
+            tokens.extend([pad]*(maxCaptionSize - len(tokens)))
+        
         caption = []
         caption.append(vocab('<start>'))
-        caption.extend([vocab(token) for token in tokens])
+        caption.extend([vocab(token) for token in tokens[:maxCaptionSize]])
         caption.append(vocab('<end>'))
         target = torch.Tensor(caption)
         return image, target
