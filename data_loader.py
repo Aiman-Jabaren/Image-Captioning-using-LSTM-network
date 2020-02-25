@@ -49,13 +49,21 @@ class CocoDataset(data.Dataset):
         maxCaptionSize = 54
         tokens = nltk.tokenize.word_tokenize(str(caption).lower())
         pad = '<pad>'
+        
+        tokens = tokens[:(maxCaptionSize-2)]
+        tokens.insert(0, '<start>')
+        tokens.append('<end>')
         if len(tokens) < maxCaptionSize:
             tokens.extend([pad]*(maxCaptionSize - len(tokens)))
-        
         caption = []
-        caption.append(vocab('<start>'))
         caption.extend([vocab(token) for token in tokens[:maxCaptionSize]])
-        caption.append(vocab('<end>'))
+#         if len(tokens) < maxCaptionSize:
+#             tokens.extend([pad]*(maxCaptionSize - len(tokens)))
+        
+#         caption = []
+#         caption.append(vocab('<start>'))
+#         caption.extend([vocab(token) for token in tokens[:maxCaptionSize]])
+#         caption.append(vocab('<end>'))
         target = torch.Tensor(caption)
         return image, target
 
