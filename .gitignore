@@ -2,6 +2,7 @@ __pycache__/*
 .ipynb_checkpoints/*
 data/images
 data/annotations
+data/vocab.pkl
 *.swp
 logfile*
 *.pkl
