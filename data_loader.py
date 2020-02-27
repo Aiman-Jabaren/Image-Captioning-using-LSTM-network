@@ -46,18 +46,18 @@ class CocoDataset(data.Dataset):
             image = self.transform(image)
 
         # Convert caption (string) to word ids.
-        maxCaptionSize = 54
+        maxCaptionSize = 56
         tokens = nltk.tokenize.word_tokenize(str(caption).lower())
         pad = '<pad>'
         
-        tokens = tokens[:(maxCaptionSize-2)]
+        tokens = tokens[:(maxCaptionSize)]
         tokens.insert(0, '<start>')
         tokens.append('<end>')
         length = len(tokens)
         if len(tokens) < maxCaptionSize:
             tokens.extend([pad]*(maxCaptionSize - len(tokens)))
-        caption = []
-        caption.extend([vocab(token) for token in tokens[:maxCaptionSize]])
+        
+        caption = [vocab(token) for token in tokens[:maxCaptionSize]]
 #         if len(tokens) < maxCaptionSize:
 #             tokens.extend([pad]*(maxCaptionSize - len(tokens)))
         
@@ -105,6 +105,9 @@ def collate_fn(data):
         end = lengths[i]
         targets[i, :end] = cap[:end]        
     return images, targets, lengths, actual_lengths
+
+
+                
 
 def get_loader(root, json, ids, vocab, transform, batch_size, shuffle, num_workers):
     """Returns torch.utils.data.DataLoader for custom coco dataset."""

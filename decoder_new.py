@@ -61,6 +61,32 @@ class Decoder(nn.Module):
         word_scores = F.softmax(fc_out, dim=2)
         return word_scores
     
-    def generate_caption(self, features):
+    def generate_caption(self, features, maxSeqLen, temperature, stochastic=False):
         # TODO - function for generating caption without using teacher forcing (using network outputs)
-        pass
+        
+        lstm_inp = features.unsqueeze(1)
+        word_ids = []
+        
+        if stochastic:
+            for i in range(maxSeqLen):
+                lstm_out, _ = self.lstm(lstm_inp)
+                fc_out = self.fc(lstm_out.squeeze(1))
+                scores = F.softmax(fc_out, dim=1) / temperature
+                indices = (torch.distributions.Categorical(scores)).sample()
+                word_ids.append(indices)
+                lstm_inp = self.embedding(indices).unsqueeze(1)
+                
+                
+        else:
+            for i in range(maxSeqLen):
+                lstm_out, _ = self.lstm(lstm_inp)
+                fc_out = self.fc(lstm_out.squeeze(1))
+                _, indices = fc_out.max(1)
+                word_ids.append(indices)
+                lstm_inp = self.embedding(indices).unsqueeze(1)
+            
+        word_ids = torch.stack(word_ids,1)
+        print('word ids shape: ', word_ids.size())
+        print('word ids: ', word_ids)
+        
+        return word_ids
