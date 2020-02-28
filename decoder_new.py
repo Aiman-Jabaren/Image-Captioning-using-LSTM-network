@@ -22,15 +22,15 @@ class Decoder(nn.Module):
         self.fc = nn.Linear(hidden_dim, vocab_size)
 
     def forward(self, sentence, features, lengths):
-        print('sentence shape: ', sentence.size())
+#        print('sentence shape: ', sentence.size())
         embeds = self.embedding(sentence)
 #         embeds = embeds.view()
-        print('features size: ', features.size())
-        print('embeds size: ', embeds.size())
-        print('lengths: ', lengths)
+#        print('features size: ', features.size())
+#        print('embeds size: ', embeds.size())
+#        print('lengths: ', lengths)
         
         lstm_inp = torch.cat((features.unsqueeze(1), embeds), 1)
-        print('lstm inp shape: ', lstm_inp.size())
+#        print('lstm inp shape: ', lstm_inp.size())
         
         packed_sequence = pack_padded_sequence(lstm_inp, lengths, batch_first=True, enforce_sorted=False)
         
@@ -40,7 +40,7 @@ class Decoder(nn.Module):
 
         temp = pad_packed_sequence(lstm_out, batch_first=True)
     
-        print('temp shape: ', temp[0].size())
+        #print('temp shape: ', temp[0].size())
         
 #         fc_out = self.fc(temp[0])
 #         print('asdfsd ', len(lstm_out))
@@ -52,7 +52,7 @@ class Decoder(nn.Module):
 #         temp = torch.stack(tempseq, dim=0)
 #         print('temp shape: ', temp.size())
         fc_out = self.fc(temp[0])
-        print('fc_out shape: ', fc_out.size())
+#        print('fc_out shape: ', fc_out.size())
         
 #         hidden_outs, _ = self.lstm(embeds.view(len(sentence), 1, -1))
         
@@ -86,7 +86,7 @@ class Decoder(nn.Module):
                 lstm_inp = self.embedding(indices).unsqueeze(1)
             
         word_ids = torch.stack(word_ids,1)
-        print('word ids shape: ', word_ids.size())
-        print('word ids: ', word_ids)
+#        print('word ids shape: ', word_ids.size())
+#        print('word ids: ', word_ids)
         
         return word_ids
