@@ -40,7 +40,7 @@ class Decoder(nn.Module):
 
         temp = pad_packed_sequence(lstm_out, batch_first=True)
     
-        print('temp shape: ', temp[0].size())
+        #print('temp shape: ', temp[0].size())
         
 #         fc_out = self.fc(temp[0])
 #         print('asdfsd ', len(lstm_out))
