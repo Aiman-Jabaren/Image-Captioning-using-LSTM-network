@@ -4,10 +4,12 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence, pad_se
 import torch.nn.functional as F
 
 class Decoder(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, vocab_size):
+    def __init__(self, encoded_feature_dim, embedding_dim, hidden_dim, vocab_size):
         super(Decoder, self).__init__()
         
         self.device = torch.device("cuda:0")
+        
+        self.initial_fc = nn.Linear(encoded_feature_dim, embedding_dim)
         
         # Embed input vector into tensor
         self.embedding = nn.Embedding(vocab_size, embedding_dim)
@@ -28,9 +30,11 @@ class Decoder(nn.Module):
 #        print('features size: ', features.size())
 #        print('embeds size: ', embeds.size())
 #        print('lengths: ', lengths)
+
+        features = self.initial_fc(features)
         
         lstm_inp = torch.cat((features.unsqueeze(1), embeds), 1)
-#        print('lstm inp shape: ', lstm_inp.size())
+#         print('lstm inp shape: ', lstm_inp.size())
         
         packed_sequence = pack_padded_sequence(lstm_inp, lengths, batch_first=True, enforce_sorted=False)
         
@@ -40,7 +44,7 @@ class Decoder(nn.Module):
 
         temp = pad_packed_sequence(lstm_out, batch_first=True)
     
-        #print('temp shape: ', temp[0].size())
+#         print('temp shape: ', temp[0].size())
         
 #         fc_out = self.fc(temp[0])
 #         print('asdfsd ', len(lstm_out))
@@ -64,6 +68,9 @@ class Decoder(nn.Module):
     def generate_caption(self, features, maxSeqLen, temperature, stochastic=False):
         # TODO - function for generating caption without using teacher forcing (using network outputs)
         
+        features = self.initial_fc(features)
+#         print('features shape: ', features.size())
+#         print('maxseqlen: ', maxSeqLen)
         lstm_inp = features.unsqueeze(1)
         word_ids = []
         
@@ -86,7 +93,8 @@ class Decoder(nn.Module):
                 lstm_inp = self.embedding(indices).unsqueeze(1)
             
         word_ids = torch.stack(word_ids,1)
-#        print('word ids shape: ', word_ids.size())
+#         print('word ids shape: ', word_ids.size())
+        #        print('word ids shape: ', word_ids.size())
 #        print('word ids: ', word_ids)
         
         return word_ids
