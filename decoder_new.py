@@ -56,13 +56,14 @@ class Decoder(nn.Module):
 #         temp = torch.stack(tempseq, dim=0)
 #         print('temp shape: ', temp.size())
         fc_out = self.fc(temp[0])
-#        print('fc_out shape: ', fc_out.size())
+#         print('fc_out shape: ', fc_out.size())
         
 #         hidden_outs, _ = self.lstm(embeds.view(len(sentence), 1, -1))
         
 #         vocab_space = self.fc(hidden_outs.view(len(sentence), -1))
 
-        word_scores = F.softmax(fc_out, dim=2)
+#         word_scores = F.softmax(fc_out, dim=2)
+        word_scores = fc_out
         return word_scores
     
     def generate_caption(self, features, maxSeqLen, temperature, stochastic=False):
