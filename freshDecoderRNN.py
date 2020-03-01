@@ -41,7 +41,7 @@ class RNNDecoder(nn.Module):
             rnnOut, self.hidden = self.rnn(embeds[:,i,:].unsqueeze(1), self.hidden)
             outputs.append(rnnOut)
 
-        fc_out = self.fc(torch.stack(outputs, 1).squeeze())
+        fc_out = self.fc(torch.stack(outputs, 1).squeeze(2))
 
         _, indices = fc_out.max(2)
 

@@ -48,9 +48,9 @@ class Decoder(nn.Module):
         for i in range(embeds.shape[1] - 1):
             lstmOut, self.hidden = self.lstm(embeds[:,i,:].unsqueeze(1), self.hidden)
             outputs.append(lstmOut)
-#         print("outputs: {}".format(outputs[0].shape))
-#         print("Ouputs stacked: {}".format(torch.stack(outputs, 1).shape))
-        fc_out = self.fc(torch.stack(outputs, 1).squeeze())
+#        print("outputs: {}".format(outputs[0].shape))
+#        print("Ouputs stacked: {}".format(torch.stack(outputs, 1).shape))
+        fc_out = self.fc(torch.stack(outputs, 1).squeeze(2))
         
         #print("FC out; {}".format(fc_out.shape))
         _, indices = fc_out.max(2)
