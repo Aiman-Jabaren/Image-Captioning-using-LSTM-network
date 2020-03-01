@@ -212,7 +212,6 @@ def trainEncoderDecoder(encoder, decoder, criterion, epochs,
         # Early stopping
         if val_loss < minLoss:
             # Store new best
-            torch.save(model, name)
             minLoss = val_loss#.item()
             minLossIdx = epoch
             torch.save(encoder, 'weights_base/' + name + 'encoder_best')
