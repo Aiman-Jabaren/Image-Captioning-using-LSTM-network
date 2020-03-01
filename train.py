@@ -50,13 +50,13 @@ def validate_test(val_loader, encoder, decoder, criterion, maxSeqLen,
             # Move to device, if available
             if device is not None:
                 inputs = inputs.to(device)
-                lengths = lengths.to(device)
+                labels = labels.to(device)
 
                         
             enc_out = encoder(inputs)
 
             decoder.resetHidden(inputs.shape[0])
-            outputs = decoder(caps, enc_out, actual_lengths)
+            outputs = decoder(caps, enc_out, lengths)
 
 
             
@@ -83,7 +83,6 @@ def validate_test(val_loader, encoder, decoder, criterion, maxSeqLen,
     return loss_avg
 
 
-# In[7]:
 
 
 def trainEncoderDecoder(encoder, decoder, criterion, epochs,
