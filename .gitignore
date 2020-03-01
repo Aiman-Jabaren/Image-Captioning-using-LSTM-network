@@ -7,3 +7,4 @@ data/vocab.pkl
 logfile*
 *.pkl
 ./logs/*
+./generated_imgs/*
