@@ -65,13 +65,12 @@ def validate_test(val_loader, encoder, decoder, criterion, maxSeqLen,
             count+=1
             
 
-
+            
         
         
             
             del labels
             del outputs            
-            
   
         loss_avg  = loss_avg/count
         print('VAL: loss_avg: ', loss_avg)
@@ -105,6 +104,7 @@ def trainEncoderDecoder(encoder, decoder, criterion, epochs,
     
     logname_summary = './logs/' + name + '_summary' + str(i) + '.log'    
     print('Loading Summary to : ' + logname_summary) 
+    pickle_file = logname_summary[::-4] +'.pkl'
     
     
     try:
@@ -174,7 +174,6 @@ def trainEncoderDecoder(encoder, decoder, criterion, epochs,
 
             if iter % 200 == 0:
                 print("epoch{}, iter{}, loss: {}".format(epoch, iter, loss))
-
                 
         print("epoch{}, iter{}, loss: {}, epoch duration: {}".format(epoch, iter, loss, time.time() - ts))
         test_pred = decoder.generate_caption(enc_out, maxSeqLen, temperature).cpu()
@@ -231,7 +230,8 @@ def trainEncoderDecoder(encoder, decoder, criterion, epochs,
             file.write("\n training Loss:   " + str(training_loss))        
             file.write("\n Validation Loss : " + str(val_loss_set))
 
-            
+        with open(pickle_file, 'wb') as f:  # Python 3: open(..., 'wb')
+            pickle.dump([training_loss, val_loss_set], f)            
         
     #return val_loss_set, val_acc_set, val_iou_set
 
