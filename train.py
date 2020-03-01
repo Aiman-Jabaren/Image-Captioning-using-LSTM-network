@@ -321,7 +321,7 @@ if __name__=='__main__':
     
     
     if name=="rnn":
-        decoder = RNNDecoder(encoded_feature_dim, hidden_dim, depth, vocab.idx, batch_size)
+        decoder = RNNDecoder(encoded_feature_dim, hidden_dim, depth, vocab.idx, batch_size, device)
     else:
         decoder = Decoder(encoded_feature_dim, hidden_dim, depth, vocab.idx, batch_size)
     
@@ -334,20 +334,10 @@ if __name__=='__main__':
                         batch_size, maxSeqLen, vocab, device)
 
 
-# In[ ]:
 
 
-get_ipython().run_line_magic('debug', '')
 
 
-# In[ ]:
 
 
-vocab.idx
-
-
-# In[ ]:
-
-
-x = torch.Tensor([])
 

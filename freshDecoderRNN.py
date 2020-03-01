@@ -4,12 +4,12 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence, pad_se
 import torch.nn.functional as F
 
 class RNNDecoder(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, depth, vocab_size, batch_size):
-        super(Decoder, self).__init__()
+    def __init__(self, embedding_dim, hidden_dim, depth, vocab_size, batch_size, device):
+        super(RNNDecoder, self).__init__()
         self.depth = depth
         self.batch_size = batch_size
         self.hidden_dim = hidden_dim
-        self.device = torch.device("cuda:0")
+        self.device = device
         
 #        self.initial_fc = nn.Linear(encoded_feature_dim, embedding_dim)
         
