@@ -56,7 +56,7 @@ def validate_test(val_loader, encoder, decoder, criterion, maxSeqLen,
             enc_out = encoder(inputs)
 
             decoder.resetHidden(inputs.shape[0])
-            outputs = decoder(caps, enc_out, lengths)
+            outputs = decoder(labels, enc_out, lengths)
 
 
             
