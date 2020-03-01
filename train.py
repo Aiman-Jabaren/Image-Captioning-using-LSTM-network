@@ -60,7 +60,7 @@ def validate_test(val_loader, encoder, decoder, criterion, maxSeqLen,
 
 
             
-            loss = criterion(outputs, labels.cuda())
+            loss = criterion(outputs, labels.cuda(device))
             loss_avg += loss
             count+=1
             
@@ -165,7 +165,7 @@ def trainEncoderDecoder(encoder, decoder, criterion, epochs,
             decoder.resetHidden(inputs.shape[0])
             outputs = decoder(labels, enc_out, lengths) #calls forward
 
-            loss = criterion(outputs, labels.cuda())
+            loss = criterion(outputs, labels.cuda(device))
             del labels
             del outputs
 
