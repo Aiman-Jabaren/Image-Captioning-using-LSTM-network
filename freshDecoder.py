@@ -34,20 +34,29 @@ class Decoder(nn.Module):
     def forward(self, sentence, features, lengths):
 
         embeds = self.embedding(sentence)
-       
-        lstm_inp = torch.cat((features.unsqueeze(1), embeds), 1)
+        
+        #lstm_inp = torch.cat((features.unsqueeze(1), embeds), 1)
 
-        packed_sequence = pack_padded_sequence(lstm_inp, lengths, batch_first=True)
+        #packed_sequence = pack_padded_sequence(lstm_inp, lengths, batch_first=True)
         #packed_sequence = pack_padded_sequence(lstm_inp, lengths, batch_first=True, enforce_sorted=False)
         
-        packed_out, self.hidden = self.lstm(packed_sequence, self.hidden)
-
-
-    
-        fc_out = self.fc(packed_out.data)
-
-        word_scores = fc_out
-        return word_scores
+        
+        #packed_out, self.hidden = self.lstm(packed_sequence, self.hidden)
+        outputs = []
+        lstmOut, self.hidden = self.lstm(features.unsqueeze(1), self.hidden)
+        outputs.append(lstmOut)
+        for i in range(embeds.shape[1] - 1):
+            lstmOut, self.hidden = self.lstm(embeds[:,i,:].unsqueeze(1), self.hidden)
+            outputs.append(lstmOut)
+#         print("outputs: {}".format(outputs[0].shape))
+#         print("Ouputs stacked: {}".format(torch.stack(outputs, 1).shape))
+        fc_out = self.fc(torch.stack(outputs, 1).squeeze())
+        
+        #print("FC out; {}".format(fc_out.shape))
+        _, indices = fc_out.max(2)
+        #word_scores = fc_out
+        #return indices.type(torch.int64).cuda()
+        return fc_out.permute([0,2,1])
     
     def generate_caption(self, features, maxSeqLen, temperature, stochastic=False):
         # TODO - function for generating caption without using teacher forcing (using network outputs)
