@@ -137,7 +137,7 @@ def trainEncoderDecoder(encoder, decoder, criterion, epochs,
     minLoss = 1e6
     minLossIdx = 0
     earliestStopEpoch = 10
-    earlyStopDelta = 5
+    earlyStopDelta = 3
     for epoch in range(epochs):
         ts = time.time()
 
@@ -190,7 +190,7 @@ def trainEncoderDecoder(encoder, decoder, criterion, epochs,
         
         # calculate val loss each epoch
         val_loss  = validate_test(val_loader, encoder, decoder, criterion,maxSeqLen,
-                             vocab, batch_size, device)
+                             vocab, batch_size, device).item()
         val_loss_set.append(val_loss)
 
   
@@ -230,9 +230,6 @@ def trainEncoderDecoder(encoder, decoder, criterion, epochs,
             file.write("\n training Loss:   " + str(training_loss))        
             file.write("\n Validation Loss : " + str(val_loss_set))
 
-        with open(pickle_file, 'wb') as f:  # Python 3: open(..., 'wb')
-            pickle.dump([training_loss, val_loss_set], f)            
-        
     #return val_loss_set, val_acc_set, val_iou_set
 
 
@@ -247,7 +244,7 @@ if __name__=='__main__':
         if len(sys.argv) > 2:
             device = torch.device("cuda:" + sys.argv[2])
 
-            
+    random.seed(24)        
     if len(sys.argv) > 1:
         name = sys.argv[1]
         
