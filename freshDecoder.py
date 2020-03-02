@@ -69,12 +69,15 @@ class Decoder(nn.Module):
         self.resetHidden(1)
         if stochastic:
             for i in range(maxSeqLen):
-                lstm_out, _ = self.lstm(lstm_inp)
-                fc_out = self.fc(lstm_out.squeeze(1))
-                scores = F.softmax(fc_out, dim=1) / temperature
-                indices = (torch.distributions.Categorical(scores)).sample()
-                word_ids.append(indices)
-                lstm_inp = self.embedding(indices).unsqueeze(1)
+                if i ==0:
+                    lstm_out, hidden = self.lstm(lstm_inp)
+                else:
+                    lstm_out, hidden = self.lstm(lstm_inp, hidden)
+                    fc_out = self.fc(lstm_out.squeeze(1))
+                    scores = F.softmax(fc_out, dim=1) / temperature
+                    indices = (torch.distributions.Categorical(scores)).sample()
+                    word_ids.append(indices.cpu())
+                    lstm_inp = self.embedding(indices).unsqueeze(1)
                 
                 
         else:
