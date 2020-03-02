@@ -23,7 +23,7 @@ import sys
 def validate_test(val_loader, encoder, decoder, criterion, maxSeqLen,
              vocab, batch_size, use_gpu = True, calculate_bleu = True):
 
-    
+    save_generated_imgs = True
     #Evaluation Mode
     decoder.eval()
     encoder.eval()
@@ -64,7 +64,25 @@ def validate_test(val_loader, encoder, decoder, criterion, maxSeqLen,
             test_pred = decoder.generate_caption(enc_out, maxSeqLen, temperature)
 
             test_pred_sample = test_pred[0].cpu().numpy()          
-
+        
+            k = 0
+            for b in range(inputs.shape[0]):
+                caption = (" ").join([vocab.idx2word[x.item()] for x in test_pred[b]])
+                img = tf.ToPILImage()(inputs[b,:,:,:].cpu())
+                plt.imshow(img)
+                    
+                plt.show()
+                print("Caption: " + caption)
+                if save_generated_imgs:
+                    file = "./generated_imgs/" + "test_im_"+ str(k) 
+                    img.save(file + ".png", "PNG")
+                    k+=1
+                    #with open(generated_imgs_filename, "a") as file:
+                        #file.write("writing! " + "train_epoch" + str(epoch) + "im_"+ str(k) + "\n")            
+                        #file.write("Caption: " + caption +"\n \n")
+                    
+                    
+                    
             
 
             
